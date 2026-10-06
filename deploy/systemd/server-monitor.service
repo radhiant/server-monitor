@@ -1,0 +1,39 @@
+[Unit]
+Description=Server Monitor Agent - Distributed Realtime Telemetry
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+# Working directory and execution binary
+WorkingDirectory=/opt/server-monitor
+ExecStart=/opt/server-monitor/server-monitor
+
+# Environment Configuration
+EnvironmentFile=-/etc/server-monitor/server-monitor.env
+Environment=HTTP_ADDR=:9191
+Environment=METRICS_INTERVAL=1s
+Environment=HISTORY_SIZE=60
+Environment=LOG_LEVEL=info
+
+# Automatic Restart
+Restart=always
+RestartSec=5s
+
+# Security Hardening
+# Note: Root or high privileges are required to inspect other processes' memory and all host disks.
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=true
+CapabilityBoundingSet=CAP_NET_RAW CAP_NET_ADMIN CAP_SYS_PTRACE
+
+# Resource Limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

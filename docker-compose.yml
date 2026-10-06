@@ -1,0 +1,55 @@
+# Central dashboard for the monitoring fleet.
+#
+# Only the frontend runs here. The Go agents live on each monitored machine as
+# systemd services, because collecting host CPU, memory, disk and process
+# telemetry requires access to the host itself — containerising them would
+# report the container's view, not the server's.
+
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: server-monitor-dashboard:1.0
+    container_name: server-monitor-dashboard
+    restart: unless-stopped
+
+    ports:
+      # Change FRONTEND_PORT in .env to move the dashboard off port 8080.
+      - "${FRONTEND_PORT:-8080}:80"
+
+    environment:
+      # Agent addresses, substituted into the Nginx config at container start.
+      # Editing these needs a `docker compose up -d` restart, not a rebuild.
+      SRV_WEB01: "${SRV_WEB01:-192.0.2.11:9191}"
+      SRV_APP01: "${SRV_APP01:-192.0.2.12:9191}"
+      SRV_DB01: "${SRV_DB01:-192.0.2.13:9191}"
+      SRV_MONITOR01: "${SRV_MONITOR01:-192.0.2.14:9191}"
+      SRV_PROXY01: "${SRV_PROXY01:-192.0.2.15:9191}"
+      SRV_EDGE01: "${SRV_EDGE01:-198.51.100.20:9191}"
+      PROMETHEUS_ADDR: "${PROMETHEUS_ADDR:-prometheus:9090}"
+      TZ: "${TZ:-Asia/Jakarta}"
+
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      # Registry and photos are read straight off the host on every request, so
+      # editing them needs nothing but a browser refresh.
+      - ./frontend/public/servers.json:/usr/share/nginx/html/servers.json:ro
+      - ./frontend/public/images:/usr/share/nginx/html/images:ro
+
+      # The proxy config is mounted too, so adding a server is a restart rather
+      # than an image rebuild. The entrypoint re-runs envsubst on every start.
+      - ./deploy/docker/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

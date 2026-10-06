@@ -1,0 +1,56 @@
+[
+  {
+    "id": "web01",
+    "name": "Web Server 01",
+    "description": "Node 192.0.2.11",
+    "baseUrl": "/servers/web01",
+    "role": "Nginx, company site, landing pages",
+    "location": "Server room · Rack 1",
+    "image": "/images/server-1u.jpg"
+  },
+  {
+    "id": "app01",
+    "name": "Application Server",
+    "description": "Node 192.0.2.12",
+    "baseUrl": "/servers/app01",
+    "role": "Internal apps, REST APIs",
+    "location": "Server room · Rack 1",
+    "image": "/images/server-2u.jpg"
+  },
+  {
+    "id": "db01",
+    "name": "Database Server",
+    "description": "Node 192.0.2.13",
+    "baseUrl": "/servers/db01",
+    "role": "PostgreSQL, MySQL, Redis",
+    "location": "Server room · Rack 2",
+    "image": "/images/server-4u.jpg"
+  },
+  {
+    "id": "monitor01",
+    "name": "Monitoring Server",
+    "description": "Node 192.0.2.14",
+    "baseUrl": "/servers/monitor01",
+    "role": "Zabbix, Prometheus, Grafana",
+    "location": "Server room · Rack 2",
+    "image": "/images/mini-pc.jpg"
+  },
+  {
+    "id": "proxy01",
+    "name": "Reverse Proxy",
+    "description": "Node 192.0.2.15",
+    "baseUrl": "/servers/proxy01",
+    "role": "Traefik, TLS termination",
+    "location": "Server room · Rack 3",
+    "image": "/images/server-1u.jpg"
+  },
+  {
+    "id": "edge01",
+    "name": "Edge Server",
+    "description": "Node 198.51.100.20",
+    "baseUrl": "/servers/edge01",
+    "role": "Public DNS, mail relay",
+    "location": "Cloud VPS",
+    "image": "/images/server-2u.jpg"
+  }
+]

@@ -1,0 +1,10 @@
+# Keep the build context small: node_modules alone is hundreds of megabytes and
+# is reinstalled inside the image anyway.
+**/node_modules
+**/dist
+**/.env
+**/.env.local
+.git
+.gitignore
+backend/bin
+**/*.log
